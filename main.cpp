@@ -3,210 +3,183 @@
 
 using namespace std;
 
-class SiteWeb {
+class Carte {
 public:
-	const int idSite;
-	static int nrSiteUri;
-	string url;
+	const int idCarte;
+	static int nrCarti;
+	string titlu;
+	string autor;
 	int nrPagini;
-	bool esteSecurizat;
-	char* fondator;
+	char* genLiterar;
 
-	SiteWeb() : idSite(++nrSiteUri) {
-		this->url = "Necunoscuta";
+	Carte() : idCarte(++nrCarti) {
+		this->titlu = "Necunoscut";
+		this->autor = "Anonim";
 		this->nrPagini = 0;
-		this->esteSecurizat = false;
-		this->fondator = nullptr;
+		this->genLiterar = nullptr;
 	}
 
-	SiteWeb(string url, int nrPagini) : idSite(++nrSiteUri) {
-		this->url = url;
-		this->nrPagini = nrPagini;
-		this->esteSecurizat = false;
-		this->fondator = nullptr;
+	Carte(string titlu, string autor) : idCarte(++nrCarti) {
+		this->titlu = titlu;
+		this->autor = autor;
+		this->nrPagini = 100;
+		this->genLiterar = nullptr;
 	}
 
-	SiteWeb(string url, int nrPagini, bool esteSecurizat, const char* fondator) : idSite(++nrSiteUri) {
-		this->url = url;
+	Carte(string titlu, string autor, int nrPagini, const char* gen) : idCarte(++nrCarti) {
+		this->titlu = titlu;
+		this->autor = autor;
 		this->nrPagini = nrPagini;
-		this->esteSecurizat = esteSecurizat;
-		if (fondator != nullptr) {
-			this->fondator = new char[strlen(fondator) + 1];
-			strcpy_s(this->fondator, strlen(fondator) + 1, fondator);
+		if (gen != nullptr) {
+			this->genLiterar = new char[strlen(gen) + 1];
+			strcpy_s(this->genLiterar, strlen(gen) + 1, gen);
 		}
 		else {
-			this->fondator = nullptr;
+			this->genLiterar = nullptr;
 		}
 	}
 
-	static int getNrSiteUriCreate() {
-		return nrSiteUri;
+	static int getNrCartiCreate() {
+		return nrCarti;
 	}
 };
 
-int SiteWeb::nrSiteUri = 0;
+int Carte::nrCarti = 0;
 
-
-class Utilizator {
+class Cititor {
 public:
-	const int idUtilizator;
-	static int contorUtilizatori;
-	string username;
-	string email;
+	const int idCititor;
+	static int nrCititori;
+	string nume;
 	int varsta;
-	int* istoricConexiuniSecunde;
-	int nrConexiuni;
+	int nrCartiImprumutate;
+	string* cartiImprumutate;
 
-	Utilizator() : idUtilizator(++contorUtilizatori) {
-		this->username = "Anonim";
-		this->email = "";
+	Cititor() : idCititor(++nrCititori) {
+		this->nume = "Anonim";
 		this->varsta = 0;
-		this->istoricConexiuniSecunde = nullptr;
-		this->nrConexiuni = 0;
+		this->nrCartiImprumutate = 0;
+		this->cartiImprumutate = nullptr;
 	}
 
-	Utilizator(string username, string email) : idUtilizator(++contorUtilizatori) {
-		this->username = username;
-		this->email = email;
-		this->varsta = 18;
-		this->istoricConexiuniSecunde = nullptr;
-		this->nrConexiuni = 0;
-	}
-
-	Utilizator(string username, string email, int varsta, int nrConexiuni, const int* istoric) : idUtilizator(++contorUtilizatori) {
-		this->username = username;
-		this->email = email;
+	Cititor(string nume, int varsta) : idCititor(++nrCititori) {
+		this->nume = nume;
 		this->varsta = varsta;
-		this->nrConexiuni = nrConexiuni;
-		if (istoric != nullptr && nrConexiuni > 0) {
-			this->istoricConexiuniSecunde = new int[nrConexiuni];
-			for (int i = 0; i < nrConexiuni; i++) {
-				this->istoricConexiuniSecunde[i] = istoric[i];
+		this->nrCartiImprumutate = 0;
+		this->cartiImprumutate = nullptr;
+	}
+
+	Cititor(string nume, int varsta, int nrCarti, string* carti) : idCititor(++nrCititori) {
+		this->nume = nume;
+		this->varsta = varsta;
+		this->nrCartiImprumutate = nrCarti;
+		if (carti != nullptr && nrCarti > 0) {
+			this->cartiImprumutate = new string[nrCarti];
+			for (int i = 0; i < nrCarti; i++) {
+				this->cartiImprumutate[i] = carti[i];
 			}
 		}
 		else {
-			this->istoricConexiuniSecunde = nullptr;
-			this->nrConexiuni = 0;
+			this->cartiImprumutate = nullptr;
 		}
 	}
 
-	static void reseteazaContorUtilizatori() {
-		contorUtilizatori = 0;
+	static int getNrCititori() {
+		return nrCititori;
 	}
 };
 
-int Utilizator::contorUtilizatori = 0;
+int Cititor::nrCititori = 0;
 
 
-class Browser {
+class Bibliotecar {
 public:
-	const int idBrowser;
-	static int nrBrowsereInstalate;
-	static string motorCautareDefault;
+	const int idBibliotecar;
+	static int nrBibliotecari;
 	string nume;
-	float versiune;
-	char* companieProducatoare;
+	int vechimeAni;
+	char* sectie;
 
-	Browser() : idBrowser(++nrBrowsereInstalate) {
+	Bibliotecar() : idBibliotecar(++nrBibliotecari) {
 		this->nume = "Necunoscut";
-		this->versiune = 1.0;
-		this->companieProducatoare = nullptr;
+		this->vechimeAni = 0;
+		this->sectie = nullptr;
 	}
 
-	Browser(string nume, float versiune) : idBrowser(++nrBrowsereInstalate) {
+	Bibliotecar(string nume, int vechimeAni) : idBibliotecar(++nrBibliotecari) {
 		this->nume = nume;
-		this->versiune = versiune;
-		this->companieProducatoare = nullptr;
+		this->vechimeAni = vechimeAni;
+		this->sectie = nullptr;
 	}
 
-	Browser(string nume, float versiune, const char* companie) : idBrowser(++nrBrowsereInstalate) {
+	Bibliotecar(string nume, int vechimeAni, const char* sectie) : idBibliotecar(++nrBibliotecari) {
 		this->nume = nume;
-		this->versiune = versiune;
-		if (companie != nullptr) {
-			this->companieProducatoare = new char[strlen(companie) + 1];
-			strcpy_s(this->companieProducatoare, strlen(companie) + 1, companie);
+		this->vechimeAni = vechimeAni;
+		if (sectie != nullptr) {
+			this->sectie = new char[strlen(sectie) + 1];
+			strcpy_s(this->sectie, strlen(sectie) + 1, sectie);
 		}
 		else {
-			this->companieProducatoare = nullptr;
+			this->sectie = nullptr;
 		}
 	}
 
-	static string getMotorCautareDefault() {
-		return motorCautareDefault;
+	static int getNrBibliotecari() {
+		return nrBibliotecari;
 	}
 };
 
-int Browser::nrBrowsereInstalate = 0;
-string Browser::motorCautareDefault = "Google";
+int Bibliotecar::nrBibliotecari = 0;
 
 
 int main() {
+	cout << "--- TESTARE CLASA CARTE ---" << endl;
+	Carte c1;
+	cout << "C1 (default): ID=" << c1.idCarte << ", Titlu=" << c1.titlu << ", Autor=" << c1.autor << endl;
 
-	cout << "--- TESTARE CLASA SITEWEB ---" << endl;
+	Carte c2("Ion", "Liviu Rebreanu");
+	cout << "C2 (2 param): ID=" << c2.idCarte << ", Titlu=" << c2.titlu << ", Autor=" << c2.autor << ", NrPagini=" << c2.nrPagini << endl;
 
-	SiteWeb s1;
-	cout << "S1 (default): ID=" << s1.idSite << ", URL: " << s1.url << ", Pagini: " << s1.nrPagini << endl;
-    
-	SiteWeb s2("google.com", 1000000);
-	cout << "S2 (2 params): ID=" << s2.idSite << ", URL: " << s2.url << ", Pagini: " << s2.nrPagini << ", Securizat: " << s2.esteSecurizat << endl;
-
-	SiteWeb s3("facebook.com", 50000, true, "Mark Zuckerberg");
-	cout << "S3 (4 params): ID=" << s3.idSite << ", URL: " << s3.url << ", Securizat: " << s3.esteSecurizat;
-	if (s3.fondator != nullptr) {
-		cout << ", Fondator: " << s3.fondator << endl;
-	}
-	else {
-		cout << endl;
-	}
-
-	cout << "Functie statica: Nr. site-uri create: " << SiteWeb::getNrSiteUriCreate() << endl;
+	Carte c3("Crima si pedeapsa", "Dostoievski", 650, "Roman psihologic");
+	cout << "C3 (4 param): ID=" << c3.idCarte << ", Titlu=" << c3.titlu << ", Autor=" << c3.autor;
+	if (c3.genLiterar != nullptr) cout << ", Gen=" << c3.genLiterar;
 	cout << endl;
+	cout << "Functie statica: Nr. carti create = " << Carte::getNrCartiCreate() << endl << endl;
 
-	cout << "--- TESTARE CLASA UTILIZATOR ---" << endl;
 
-	Utilizator u1;
-	cout << "U1 (default): ID=" << u1.idUtilizator << ", Nume: " << u1.username << ", Email: " << u1.email << endl;
+	cout << "--- TESTARE CLASA CITITOR ---" << endl;
+	Cititor ct1;
+	cout << "CT1 (default): ID=" << ct1.idCititor << ", Nume=" << ct1.nume << endl;
 
-	Utilizator u2("ioana.tutica", "ioana@test.com");
-	cout << "U2 (2 params): ID=" << u2.idUtilizator << ", Nume: " << u2.username << ", Email: " << u2.email << ", Varsta: " << u2.varsta << endl;
+	Cititor ct2("Ioana", 23);
+	cout << "CT2 (2 param): ID=" << ct2.idCititor << ", Nume=" << ct2.nume << ", Varsta=" << ct2.varsta << endl;
 
-	int istoric[] = { 300, 150, 800, 120 };
-	Utilizator u3("admin", "admin@site.com", 25, 4, istoric);
-	cout << "U3 (5 params): ID=" << u3.idUtilizator << ", Nume: " << u3.username << ", Varsta: " << u3.varsta << ", Nr. Conexiuni: " << u3.nrConexiuni << endl;
-	if (u3.istoricConexiuniSecunde != nullptr) {
-		cout << "Istoric U3 (secunde): ";
-		for (int i = 0; i < u3.nrConexiuni; i++) {
-			cout << u3.istoricConexiuniSecunde[i] << " | ";
+	string carti[] = { "Ion", "Morometii", "Baltagul" };
+	Cititor ct3("Andrei", 22, 3, carti);
+	cout << "CT3 (4 param): ID=" << ct3.idCititor << ", Nume=" << ct3.nume << ", NrCarti=" << ct3.nrCartiImprumutate << endl;
+	if (ct3.cartiImprumutate != nullptr) {
+		cout << "Carti imprumutate: ";
+		for (int i = 0; i < ct3.nrCartiImprumutate; i++) {
+			cout << ct3.cartiImprumutate[i] << " | ";
 		}
 		cout << endl;
 	}
+	cout << "Functie statica: nr. cititori = " << Cititor::getNrCititori() << endl << endl;
 
-	cout << "Functie statica: Contor utilizatori (inainte): " << Utilizator::contorUtilizatori << endl;
-	Utilizator::reseteazaContorUtilizatori();
-	cout << "Functie statica: Contor utilizatori (dupa reset): " << Utilizator::contorUtilizatori << endl;
+
+	cout << "--- TESTARE CLASA BIBLIOTECAR ---" << endl;
+	Bibliotecar b1;
+	cout << "B1 (default): ID=" << b1.idBibliotecar << ", Nume=" << b1.nume << endl;
+
+	Bibliotecar b2("Maria", 5);
+	cout << "B2 (2 param): ID=" << b2.idBibliotecar << ", Nume=" << b2.nume << ", Vechime=" << b2.vechimeAni << endl;
+
+	Bibliotecar b3("Radu", 10, "Literatura universala");
+	cout << "B3 (3 param): ID=" << b3.idBibliotecar << ", Nume=" << b3.nume << ", Sectie=";
+	if (b3.sectie != nullptr) cout << b3.sectie;
 	cout << endl;
 
-	cout << "--- TESTARE CLASA BROWSER ---" << endl;
-
-	Browser b1;
-	cout << "B1 (default): ID=" << b1.idBrowser << ", Nume: " << b1.nume << ", Versiune: " << b1.versiune << endl;
-
-	Browser b2("Chrome", 105.0);
-	cout << "B2 (2 params): ID=" << b2.idBrowser << ", Nume: " << b2.nume << ", Versiune: " << b2.versiune << endl;
-
-	Browser b3("Firefox", 104.5, "Mozilla Foundation");
-	cout << "B3 (3 params): ID=" << b3.idBrowser << ", Nume: " << b3.nume << ", Versiune: " << b3.versiune;
-	if (b3.companieProducatoare != nullptr) {
-		cout << ", Companie: " << b3.companieProducatoare << endl;
-	}
-	else {
-		cout << endl;
-	}
-
-	cout << "Functie statica: Motor cautare default: " << Browser::getMotorCautareDefault() << endl;
-	cout << "Functie statica: Nr. browsere create: " << Browser::nrBrowsereInstalate << endl;
-	cout << endl;
-
+	cout << "Functie statica: Nr. bibliotecari = " << Bibliotecar::getNrBibliotecari() << endl;
 
 	return 0;
 }
