@@ -62,11 +62,11 @@ public:
 		return *this;
 	}
 
-	bool operator==(const Carte& c) {
+	bool operator==(const Carte& c) const {
 		return this->titlu == c.titlu && this->autor == c.autor;
 	}
 
-	bool operator>(const Carte& c) {
+	bool operator>(const Carte& c) const {
 		return this->nrPagini > c.nrPagini;
 	}
 
@@ -157,11 +157,11 @@ public:
 		return temp;
 	}
 
-	bool operator<(const Cititor& c) {
+	bool operator<(const Cititor& c) const {
 		return this->nrCartiImprumutate < c.nrCartiImprumutate;
 	}
 
-	bool operator==(const Cititor& c) {
+	bool operator==(const Cititor& c) const {
 		return this->nume == c.nume && this->varsta == c.varsta;
 	}
 
@@ -231,11 +231,11 @@ public:
 		return *this;
 	}
 
-	bool operator>(const Bibliotecar& b) {
+	bool operator>(const Bibliotecar& b) const {
 		return this->vechimeAni > b.vechimeAni;
 	}
 
-	bool operator==(const Bibliotecar& b) {
+	bool operator==(const Bibliotecar& b) const {
 		return this->nume == b.nume;
 	}
 
@@ -285,9 +285,10 @@ int main() {
 	cout << (c1 + 50) << endl;
 	comparaCarti(c1, c2);
 
-	string carti[] = { "Ion", "Morometii" };
-	Cititor ct1("Ioana", 21, 2, carti);
-	Cititor ct2("Andrei", 22, 3, carti);
+	string carti1[] = { "Ion", "Morometii" };
+	string carti2[] = { "Ion", "Morometii", "Baltagul" };
+	Cititor ct1("Ioana", 21, 2, carti1);
+	Cititor ct2("Andrei", 22, 3, carti2);
 	Cititor ct3 = ct2;
 	ct3 = ct1;
 	cout << ct1 << endl << ct2 << endl;
