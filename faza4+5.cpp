@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <fstream>
 using namespace std;
 
 class Carte {
@@ -82,6 +83,26 @@ public:
     static int getNrCarti() { return nrCarti; }
 
     // void afis() const { cout << *this << endl; }
+
+    void scrieInFisierText(ofstream& fout) const {
+        fout << titlu << "\n" << autor << "\n" << nrPagini << "\n";
+        fout << (genLiterar ? genLiterar : "NULL") << "\n";
+    }
+
+    void citesteDinFisierText(ifstream& fin) {
+        getline(fin, titlu);
+        getline(fin, autor);
+        fin >> nrPagini;
+        fin.ignore();
+        
+        string g;
+        getline(fin, g);
+        if (genLiterar) delete[] genLiterar;
+        if (g != "NULL") {
+            genLiterar = new char[g.size() + 1];
+            strcpy_s(genLiterar, g.size() + 1, g.c_str());
+        } else genLiterar = nullptr;
+    }
 };
 int Carte::nrCarti = 0;
 
@@ -155,6 +176,65 @@ public:
     // }
 
     static int getNrCititori() { return nrCititori; }
+
+    void scrieInFisierText(ofstream& fout) const {
+        fout << nume << "\n" << varsta << "\n" << nrCartiImprumutate << "\n";
+        for (int i = 0; i < nrCartiImprumutate; i++)
+            fout << cartiImprumutate[i] << "\n";
+    }
+
+    void citesteDinFisierText(ifstream& fin) {
+        getline(fin, nume);
+        fin >> varsta >> nrCartiImprumutate;
+        fin.ignore();
+
+        if (cartiImprumutate) delete[] cartiImprumutate;
+
+        if (nrCartiImprumutate > 0) {
+            cartiImprumutate = new string[nrCartiImprumutate];
+            for (int i = 0; i < nrCartiImprumutate; i++)
+                getline(fin, cartiImprumutate[i]);
+        } else cartiImprumutate = nullptr;
+    }
+
+    void scrieInFisierBinar(ofstream& fout) const {
+        size_t len = nume.size();
+        fout.write((char*)&len, sizeof(len));
+        fout.write(nume.c_str(), len);
+
+        fout.write((char*)&varsta, sizeof(varsta));
+        fout.write((char*)&nrCartiImprumutate, sizeof(nrCartiImprumutate));
+
+        for (int i = 0; i < nrCartiImprumutate; i++) {
+            size_t l = cartiImprumutate[i].size();
+            fout.write((char*)&l, sizeof(l));
+            fout.write(cartiImprumutate[i].c_str(), l);
+        }
+    }
+
+    void citesteDinFisierBinar(ifstream& fin) {
+        size_t len;
+        fin.read((char*)&len, sizeof(len));
+        nume.resize(len);
+        fin.read(&nume[0], len);
+
+        fin.read((char*)&varsta, sizeof(varsta));
+        fin.read((char*)&nrCartiImprumutate, sizeof(nrCartiImprumutate));
+
+        if (cartiImprumutate) delete[] cartiImprumutate;
+        cartiImprumutate = nullptr;
+
+        if (nrCartiImprumutate > 0) {
+            cartiImprumutate = new string[nrCartiImprumutate];
+            for (int i = 0; i < nrCartiImprumutate; i++) {
+                size_t l;
+                fin.read((char*)&l, sizeof(l));
+                cartiImprumutate[i].resize(l);
+                fin.read(&cartiImprumutate[i][0], l);
+            }
+        }
+    }
+
 };
 int Cititor::nrCititori = 0;
 
@@ -226,6 +306,43 @@ public:
     // }
 
     static int getNrBibliotecari() { return nrBibliotecari; }
+
+    void scrieInFisierBinar(ofstream& fout) const {
+        size_t len = nume.size();
+        fout.write((char*)&len, sizeof(len));
+        fout.write(nume.c_str(), len);
+
+        fout.write((char*)&vechimeAni, sizeof(vechimeAni));
+
+        if (sectie) {
+            size_t lg = strlen(sectie);
+            fout.write((char*)&lg, sizeof(lg));
+            fout.write(sectie, lg);
+        } else {
+            size_t lg = 0;
+            fout.write((char*)&lg, sizeof(lg));
+        }
+    }
+
+    void citesteDinFisierBinar(ifstream& fin) {
+        size_t len;
+        fin.read((char*)&len, sizeof(len));
+        nume.resize(len);
+        fin.read(&nume[0], len);
+
+        fin.read((char*)&vechimeAni, sizeof(vechimeAni));
+
+        size_t lg;
+        fin.read((char*)&lg, sizeof(lg));
+
+        if (sectie) delete[] sectie;
+
+        if (lg > 0) {
+            sectie = new char[lg + 1];
+            fin.read(sectie, lg);
+            sectie[lg] = '\0';
+        } else sectie = nullptr;
+    }
 };
 int Bibliotecar::nrBibliotecari = 0;
 
@@ -324,6 +441,31 @@ int main() {
 
     cout << "\n== TESTARE IMPRUMUT (FAZA 5) ==\n";
     cout << I << endl;
+
+    ofstream foutText("carte.txt");
+    c1.scrieInFisierText(foutText);
+    foutText.close();
+
+    ifstream finText("carte.txt");
+    Carte c2;
+    c2.citesteDinFisierText(finText);
+    finText.close();
+
+    cout << "\n== Citire din fisier text ==\n";
+    cout << c2 << endl;
+
+    ofstream foutBin("cititor.bin", ios::binary);
+    ct1.scrieInFisierBinar(foutBin);
+    foutBin.close();
+
+    ifstream finBin("cititor.bin", ios::binary);
+    Cititor ct2;
+    ct2.citesteDinFisierBinar(finBin);
+    finBin.close();
+
+    cout << "\n== Citire din fisier binar ==\n";
+    cout << ct2 << endl;
+
 
     return 0;
 }
