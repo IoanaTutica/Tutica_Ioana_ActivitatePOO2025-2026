@@ -106,6 +106,32 @@ public:
 };
 int Carte::nrCarti = 0;
 
+class CarteDigitala : public Carte {
+private:
+    string formatFisier;
+    float dimensiuneMB;
+
+public:
+    CarteDigitala() : Carte() {
+        formatFisier = "necunoscut";
+        dimensiuneMB = 0;
+    }
+
+    CarteDigitala(string titlu, string autor, int nrPagini, const char* gen,
+                  string format, float dim)
+        : Carte(titlu, autor, nrPagini, gen) {
+        formatFisier = format;
+        dimensiuneMB = dim;
+    }
+
+    friend ostream& operator<<(ostream& out, const CarteDigitala& cd) {
+        out << (Carte&)cd
+            << ", format: " << cd.formatFisier
+            << ", dimensiune: " << cd.dimensiuneMB << "MB";
+        return out;
+    }
+};
+
 class Cititor {
 private:
     const int idCititor;
@@ -237,6 +263,56 @@ public:
 
 };
 int Cititor::nrCititori = 0;
+
+class CititorPremium : public Cititor {
+private:
+    float taxaLunara;
+    int reducere;
+
+public:
+    CititorPremium() : Cititor() {
+        taxaLunara = 0;
+        reducere = 0;
+    }
+
+    CititorPremium(string nume, int varsta, int nrCarti, string* carti,
+                   float taxa, int red)
+        : Cititor(nume, varsta, nrCarti, carti) {
+        taxaLunara = taxa;
+        reducere = red;
+    }
+
+    friend ostream& operator<<(ostream& out, const CititorPremium& cp) {
+        out << (Cititor&)cp
+            << ", taxa: " << cp.taxaLunara
+            << ", reducere: " << cp.reducere << "%";
+        return out;
+    }
+};
+
+class Imprumut {
+private:
+    Carte c;
+    Cititor ct;
+    int nrZile;
+    float penalizareZi;
+
+public:
+    Imprumut() : nrZile(0), penalizareZi(0) {}
+
+    Imprumut(Carte c, Cititor ct, int zile, float pen)
+        : c(c), ct(ct), nrZile(zile), penalizareZi(pen) {}
+
+    float calcPenalizare() const {
+        return nrZile * penalizareZi;
+    }
+
+    friend ostream& operator<<(ostream& out, const Imprumut& i) {
+        out << "Imprumut: zile=" << i.nrZile
+            << ", penalizare totala=" << i.calcPenalizare();
+        return out;
+    }
+};
 
 class Bibliotecar {
 private:
@@ -466,6 +542,18 @@ int main() {
     cout << "\n== Citire din fisier binar ==\n";
     cout << ct2 << endl;
 
+     CarteDigitala cd("Clean Code", "Robert Martin", 450, "IT", "PDF", 5.2f);
+    cout << cd << endl;
+
+    string cartiP[] = {"Clean Code"};
+    CititorPremium cp("Ana", 25, 1, cartiP, 30, 15);
+    cout << cp << endl;
+
+    Carte* pCarte = &cd;
+    Cititor* pCititor = &cp;
+
+    cout << *pCarte << endl;
+    cout << *pCititor << endl;
 
     return 0;
 }
